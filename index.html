@@ -1,0 +1,756 @@
+<!-- FILEPATH: /Users/dsi/Sites/terangacloud/airsenegal/site/index.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <title>My Vue.js App</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
+        integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.1.1/js/all.js"
+        integrity="sha384-BtvRZcyfv4r0x/phJt9Y9HhnN5ur1Z+kZbKVgzVBAlQZX4jvAuImlIz+bG7TS00a"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="banner pt-5">
+        <div class="menu-icon">
+            <i class="fas fa-bars"></i>
+            <img class="logo" src="img/image.png" alt="Logo de votre entreprise">
+        </div>
+        <div class="help-text">
+            Besoin d'aide ?
+        </div>
+        <div class="right-buttons">
+            <button class="btn">Se connecter</button>
+            <button class="btn">Créer un compte</button>
+        </div>
+    </div>
+    <div >
+        <hr class="py-3 bg-success">
+    </div>
+    <div class="container">
+        <div id="app">
+            <div class="row mt-5" v-if="selectedRecord">
+                <div class="col-12 col-md-4">
+                    <div class="card border-success mb-3">
+                        <div class="card-body text-success selected-item">
+                            <p class="card-text">
+                                <span class="fw-bold">Objet de la demande : </span>
+                                {{ selectedRecord.description }}
+                            </p>
+                            <i class="fas fa-check-circle fa-2x fa-fw"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4" v-if="selectedType">
+                    <div class="card border-success mb-3">
+                        <div class="card-body text-success selected-item">
+                            <p class="card-text">
+                                <span class="fw-bold">Type de demande : </span>
+                                {{ selectedType.label }}
+                            </p>
+                            <i class="fas fa-check-circle fa-2x fa-fw"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4" v-if="selectedCategory">
+                    <div class="card border-success mb-3">
+                        <div class="card-body text-success selected-item">
+                            <p class="card-text">
+                                <span class="fw-bold">Catégorie de demande : </span>
+                                {{ selectedCategory.label }}
+                            </p>
+                            <i class="fas fa-check-circle fa-2x fa-fw"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5" v-if="!selectedRecord">
+                <div class="col-12">
+                    <h1 class="text-start section-title">Quel est l'objet de votre demande ?</h1>
+                </div>
+                <div class="col-12 col-md-4 mt-2" v-for="recordItem in map.records">
+                    <!-- Your Vue.js app goes here -->
+                    <div class="card text-white bg-success" @click="selectRecord(recordItem)">
+                        <div class="card-body default-item">
+                            <i :class="recordItem.icon"></i>
+                            <p class="card-text text-center">{{ recordItem.description }}</p>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" v-if="selectedRecord">
+                <div class="col-12 mt-3">
+                    <button class="btn btn-outline-success" @click="goBackStep()">Précédent</button>
+                </div>
+            </div>
+            <div class="row" v-if="!selectedType && selectedRecord && selectedRecord.types.length>0">
+                <div class="col-12 mt-3">
+                    <h1 class="text-start section-title">Comment pouvons nous vous aider ?</h1>
+                </div>
+                <div class="col-12 col-md-4 mt-2" v-for="typeItem in selectedRecord.types">
+                    <!-- Your Vue.js app goes here -->
+                    <div class="card text-white bg-success" @click="selectType(typeItem)">
+                        <div class="card-body default-item">
+                            <i :class="typeItem.icon"></i>
+                            <p class="card-text text-center">
+                                {{ typeItem.label }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5" v-if="!selectedCategory && selectedType && selectedType.categories.length>0">
+                <div class="col-12">
+                    <h1 class="text-start section-title">Donnez plus de détails</h1>
+                </div>
+                <div class="col-12">
+                    <hr class="bg-success py-1">
+                </div>
+                <div class="col-12 col-md-4 mt-2" v-for="categoryItem in selectedType.categories">
+                    <!-- Your Vue.js app goes here -->
+                    <div class="card text-white bg-success" @click="selectCategory(categoryItem)">
+                        <div class="card-body default-item">
+                            <i :class="categoryItem.icon"></i>
+                            <p class="card-text text-center">
+                                {{ categoryItem.label }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row"
+                v-if="(selectedRecord && selectedRecord.types.length<1) || (selectedType && selectedType.categories.length<1) || selectedCategory">
+                <div class="col-12">
+                    <h1 class="section-title">Merci de selectionner les détails suivants : </h1>
+                </div>
+                <div class="col-12">
+                    <div class="card border-success mb-3">
+                        <div class="card-body">
+                            <form
+                                action="https://air-senegal--dev.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D3G0000008qhI"
+                                method="POST" class="p-4">
+                                <input type="hidden" name="orgid" value="00D3G0000008qhI">
+                                <input type="hidden" name="retURL" value="https://flyairsenegal.com">
+                                <input type="hidden" name="recordType" id="recordType" :value="selectedRecord.recordId">
+                                <input v-if="selectedRecord" type="hidden" name="subject" id="subject"
+                                    :value="selectedRecord.name">
+                                <input v-if="selectedType" type="hidden" name="type" id="type"
+                                    :value="selectedType.value">
+                                <input v-if="selectedCategory" type="hidden" name="00N3G00000K9hAc" id="00N3G00000K9hAc"
+                                    :value="selectedCategory.value">
+                                <input type="hidden" id="external" name="external" value="1"><br>
+                                <input type="hidden" id="00N3G00000JUIas" name="00N3G00000JUIas"
+                                    :value="formattedDateChangementBillet">
+
+                                <div class="row">
+                                    <div :class="getColSize(fieldItem)"
+                                        v-if="fieldItem.all || (fieldItem.relatedRecords.length && fieldItem.relatedRecords.includes(selectedRecord.recordId))"
+                                        v-for="fieldItem in map.fields">
+                                        <label for="name" class="form-label">{{ fieldItem.label }}</label>
+                                        <input @change="handleChange" v-if="fieldItem.fieldType=='input'"
+                                            :id="fieldItem.id" :maxlength="fieldItem.maxlength" :name="fieldItem.name"
+                                            :type="fieldItem.type" class="form-control border-success"
+                                            :required="fieldItem.required">
+                                        <textarea :name="fieldItem.name" class="form-control border-success" rows="4"
+                                            v-if="fieldItem.fieldType==='textarea'"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center mt-3">
+                                        <input type="submit" name="submit" class="btn btn-success">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- BEGIN: Vue.js initialization -->
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!',
+                formattedDateChangementBillet: '',
+                map: {
+                    records: [
+
+                        {
+                            recordId: '0123G000002aUlG',
+                            name: 'Réservation',
+                            description: 'Préparer mon voyage et réserver un vol',
+                            icon: 'fas fa-plane fa-2x fa-fw',
+                            types: [
+                                {
+                                    label: 'Je souhaite obtenir le tarif d\'une réservation',
+                                    value: 'Tarif',
+                                    icon: 'fas fa-dollar-sign fa-2x fa-fw',
+                                    categories: [
+                                        {
+                                            label: 'Particuliers',
+                                            value: 'Particuliers',
+                                            icon: 'fas fa-user fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Groupes',
+                                            value: 'Groupes',
+                                            icon: 'fas fa-users fa-2x fa-fw'
+                                        },
+                                    ]
+                                },
+                                {
+                                    label: 'Je souhaite obtenir le proforma d\'une réservation',
+                                    value: 'Proforma',
+                                    icon: 'fas fa-file-invoice-dollar fa-2x fa-fw',
+                                    categories: [
+                                        {
+                                            label: 'Particuliers',
+                                            value: 'Particuliers',
+                                            icon: 'fas fa-user fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Groupes',
+                                            value: 'Groupes',
+                                            icon: 'fas fa-users fa-2x fa-fw'
+                                        },
+                                    ]
+                                },
+                                {
+                                    label: 'Je souhaite obtenir la facture d\'une réservation',
+                                    value: 'Facture',
+                                    icon: 'fas fa-file-invoice fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite acheter un billet',
+                                    value: 'Achat de billet',
+                                    icon: 'fas fa-ticket-alt fa-2x fa-fw',
+                                    categories: [
+                                        {
+                                            label: 'Particuliers',
+                                            value: 'Particuliers',
+                                            icon: 'fas fa-user fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Groupes',
+                                            value: 'Groupes',
+                                            icon: 'fas fa-users fa-2x fa-fw'
+                                        },
+                                    ]
+                                },
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aFdH',
+                            name: 'Changement de date',
+                            icon: "fas fa-calendar-alt fa-2x fa-fw",
+                            description: "Je souhaite changer la date de mon vol",
+                            types: [
+                                {
+                                    label: 'Je souhaite changer la date de mon vol pour des raisons personnelles',
+                                    value: 'Volontaire',
+                                    icon: 'fas fa-question-circle fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite changer la date de mon vol suite à une irrégularité',
+                                    value: 'Suite à une irrégularité',
+                                    icon: 'fas fa-exclamation-triangle fa-2x fa-fw',
+                                    categories: [
+                                        {
+                                            label: 'Il y\'a une irrégularité sur l’avion',
+                                            value: 'IrgAvion',
+                                            icon: 'fas fa-exclamation-triangle fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Il y\'a une irrégularité sur l’horaire',
+                                            value: 'IrghHoraire',
+                                            icon: 'fas fa-exclamation-triangle fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Il y\'a une irrégularité sur l’itineraire',
+                                            value: 'IrgItinéraire',
+                                            icon: 'fas fa-exclamation-triangle fa-2x fa-fw'
+                                        },
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aFdW',
+                            name: 'Annulation',
+                            description: "Je souhaite annuler mon vol",
+                            icon: 'fas fa-calendar-times fa-2x fa-fw',
+                            types: [
+                                {
+                                    label: 'Je souhaite annuler mon vol pour une utilisation ultérieure',
+                                    value: 'Utilisation ultérieure',
+                                    icon: 'fas fa-cube fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite annuler mon vol pour des raisons personnelles',
+                                    value: 'Volontaire',
+                                    icon: 'fas fa-hands-helping fa-2x fa-fw',
+                                    categories: []
+                                },
+
+                                {
+                                    label: 'Je souhaite annuler mon vol suite à une irrégularité',
+                                    value: 'Suite à une irrégularité',
+                                    icon: 'fas fa-exclamation-triangle fa-2x fa-fw',
+                                    categories: [
+                                        {
+                                            label: 'Il y\'a une irrégularité sur l’avion',
+                                            value: 'IrgAvion',
+                                            icon: 'fas fa-exclamation-triangle fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Il y\'a une irrégularité sur l’horaire',
+                                            value: 'IrghHoraire',
+                                            icon: 'fas fa-exclamation-triangle fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Il y\'a une irrégularité sur l’itineraire',
+                                            value: 'IrgItinéraire',
+                                            icon: 'fas fa-exclamation-triangle fa-2x fa-fw'
+                                        },
+                                    ]
+                                },
+
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aYzP',
+                            name: 'Indemnisation',
+                            icon: "fas fa-file-invoice-dollar fa-2x fa-fw",
+                            description: "Je souhaite obtenir une indemnisation",
+                            types: [
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à des bagages endommagés',
+                                    value: 'Bagages endommagés',
+                                    icon: 'fas fa-suitcase-rolling fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à des bagages perdus',
+                                    value: 'Bagages perdus',
+                                    icon: 'fas fa-suitcase fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à un retard ou une annulation de vol',
+                                    value: 'Retard/Annulation vol',
+                                    icon: 'fas fa-plane fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation par rapport à mon programme de fidélité',
+                                    value: 'Programme fidélité',
+                                    icon: 'fas fa-certificate fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à mon déclassement',
+                                    value: 'Déclassement',
+                                    icon: 'fas fa-arrow-down fa-2x fa-fw',
+                                    categories: []
+                                },
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aFdR',
+                            name: 'Remboursement',
+                            description: "Je souhaite faire une demande de remboursement",
+                            icon: 'fas fa-money-bill-wave fa-2x fa-fw',
+                            types: [
+                                {
+                                    label: 'Je souhaite un remboursement pour des raisons personnelles',
+                                    value: 'Volontaire',
+                                    icon: 'fas fa-hands-helping fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite un remboursement suite à un retard ou une annulation vol',
+                                    value: 'Retard/Annulation vol',
+                                    icon: 'fas fa-plane fa-2x fa-fw',
+                                    categories: []
+                                },
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aYmY',
+                            name: 'Réclamation',
+                            description: "Je souhaite faire une réclamation",
+                            icon: 'fas fa-exclamation-circle fa-2x fa-fw',
+                            types: [
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à des bagages endommagés',
+                                    value: 'Bagages endommagés',
+                                    icon: 'fas fa-suitcase-rolling fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à des bagages perdus',
+                                    value: 'Bagages perdus',
+                                    icon: 'fas fa-suitcase fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à un retard ou une annulation de vol',
+                                    value: 'Retard/Annulation vol',
+                                    icon: 'fas fa-plane fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation par rapport à mon programme de fidélité',
+                                    value: 'Programme fidélité',
+                                    icon: 'fas fa-certificate fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite faire une réclamation suite à mon déclassement',
+                                    value: 'Déclassement',
+                                    icon: 'fas fa-arrow-down fa-2x fa-fw',
+                                    categories: []
+                                },
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aFdM',
+                            name: 'Attestation de retard ou d\'annulation de vol',
+                            icon: "fas fa-file fa-2x fa-fw",
+                            description: "Je souhaite obtenir une attestation de retard ou d'annulation de vol",
+                            types: []
+                        },
+                        {
+                            recordId: '0123G000002aUlf',
+                            name: 'Geste commercial',
+                            icon: "fas fa-gift fa-2x fa-fw",
+                            description: "Je souhaite obtenir un geste commercial",
+                            types: [
+                                {
+                                    label: 'Je souhaite des bagages supplémentaires',
+                                    value: 'Bagages supplémentaire',
+                                    icon: 'fas fa-suitcase fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite une modification sans différence tarifaire',
+                                    value: 'Modification sans différence tarifaire',
+                                    icon: 'fas fa-edit fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite un sur classement',
+                                    value: 'Sur classement',
+                                    icon: 'fas fa-arrow-up fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'Je souhaite une levée de pénalité',
+                                    value: 'Levée de pénalité',
+                                    icon: 'fas fa-exclamation-circle fa-2x fa-fw',
+                                    categories: [
+                                        {
+                                            label: 'Je demande une levée de pénalité suite à un changement terminal',
+                                            value: 'changement terminal',
+                                            icon: 'fas fa-exchange-alt fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Je demande une levée de pénalité suite à une maladie',
+                                            value: 'Maladie',
+                                            icon: 'fas fa-medkit fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Je demande une levée de pénalité suite à un accident',
+                                            value: 'Accident',
+                                            icon: 'fas fa-ambulance fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Je demande une levée de pénalité suite à un décés',
+                                            value: 'Décés',
+                                            icon: 'fas fa-cross fa-2x fa-fw'
+                                        },
+                                        {
+                                            label: 'Je demande une levée de pénalité suite à un retard vol',
+                                            value: 'Retard vol',
+                                            icon: 'fas fa-clock fa-2x fa-fw'
+                                        },
+                                    ]
+                                },
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aUlV',
+                            name: 'Assistance/Autres services',
+                            icon: 'fas fa-calendar fa-2x fa-fw',
+                            description: "Je souhaite une assistance/autres services",
+                            types: [
+                                {
+                                    label: 'je souhaite disposer d\'une chaise roulante',
+                                    value: 'Chaise roulante',
+                                    icon: 'fas fa-wheelchair fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'je souhaite disposer d\'un accompagnement',
+                                    value: 'Accompagnement',
+                                    icon: 'fas fa-user-friends fa-2x fa-fw',
+                                    categories: []
+                                },
+
+                                {
+                                    label: 'je souhaite disposer d\'un siége avion',
+                                    value: 'Siege avion',
+                                    icon: 'fas fa-plane fa-2x fa-fw',
+                                    categories: []
+                                },
+
+                                {
+                                    label: 'je souhaite disposer d\'un siége bebe',
+                                    value: 'Siege bebe',
+                                    icon: 'fas fa-child fa-2x fa-fw',
+                                    categories: []
+                                },
+                                {
+                                    label: 'je souhaite disposer d\'un plat spécifique',
+                                    value: 'Plat spécifique',
+                                    icon: 'fas fa-utensils fa-2x fa-fw',
+                                    categories: []
+                                },
+                            ]
+                        },
+                        {
+                            recordId: '0123G000002aYmT',
+                            name: 'Informations',
+                            description: "Je souhaite avoir des informations supplémentaires",
+                            icon: 'fas fa-info-circle fa-2x fa-fw',
+                            types: []
+                        },
+                    ],
+                    fields: [
+                        {
+                            label: 'E-mail',
+                            name: 'email',
+                            type: 'email',
+                            id: 'email',
+                            size: 20,
+                            all: true,
+                            relatedRecords: [],
+                            fieldType: 'input',
+                            required: true,
+                        },
+                        {
+                            label: 'Nom du contact',
+                            name: 'name',
+                            size: 20,
+                            type: 'text',
+                            id: 'name',
+                            all: true,
+                            maxlength: 80,
+                            relatedRecords: [],
+                            fieldType: 'input',
+                            required: false,
+                        },
+                        {
+                            label: 'Téléphone',
+                            name: 'Téléphone',
+                            all: true,
+                            id: "phone",
+                            maxlength: 40,
+                            size: 20,
+                            type: 'text',
+                            relatedRecords: [],
+                            fieldType: 'input',
+                            required: false,
+                        },
+                        {
+                            label: 'Date de changement',
+                            name: "dateChangementBillet",
+                            id: "dateChangementBillet",
+                            size: 12,
+                            type: 'date',
+                            all: false,
+                            relatedRecords: ['0123G000002aFdH'],
+                            fieldType: 'input',
+                            required: true,
+                        },
+                        {
+                            label: 'Numéro de réservation',
+                            name: '00N3G00000K92Ua',
+                            id: '00N3G00000K92Ua',
+                            maxlength: 255,
+                            size: 20,
+                            type: 'text',
+                            all: false,
+                            relatedRecords: ['0123G000002aFdH', '0123G000002aFdR', '0123G000002aYmY', '0123G000002aYzP', '0123G000002aFdW', '0123G000002aFdM', '0123G000002aUlf', '0123G000002aUlV'],
+                            fieldType: 'input',
+                            required: true,
+                        },
+                        {
+                            label: 'Numéro de billet',
+                            name: '00N3G00000K92Uf',
+                            id: '00N3G00000K92Uf',
+                            maxlength: 255,
+                            size: 20,
+                            type: 'text',
+                            all: false,
+                            relatedRecords: ['0123G000002aFdH', '0123G000002aFdR', '0123G000002aYmY', '0123G000002aYzP', '0123G000002aFdW', '0123G000002aFdM', '0123G000002aUlf', '0123G000002aUlV'],
+                            fieldType: 'input',
+                            required: true,
+                        },
+                        {
+                            label: 'Description',
+                            name: 'description',
+                            type: 'textarea',
+                            all: true,
+                            relatedRecords: [],
+                            fieldType: 'textarea',
+                            required: false,
+                        },
+                    ]
+                },
+                selectedRecord: null,
+                selectedType: null,
+                selectedCategory: null,
+            },
+            methods: {
+                reverseMessage: function () {
+                    this.message = this.message.split('').reverse().join('')
+                },
+                submit: function () {
+                    console.log('submit');
+                },
+                selectRecord: function (record) {
+                    this.selectedRecord = record;
+                },
+                selectType: function (type) {
+                    this.selectedType = type;
+                },
+                selectCategory: function (category) {
+                    this.selectedCategory = category;
+                },
+                goBackStep: function () {
+                    if (this.selectedCategory) {
+                        this.selectedCategory = null;
+                        return;
+                    }
+                    if (this.selectedType) {
+                        this.selectedType = null;
+                        return;
+                    }
+                    if (this.selectedRecord) {
+                        this.selectedRecord = null;
+                        return;
+                    }
+                },
+                handleChange: function (event) {
+                    if (event.target.name == 'dateChangementBillet') {
+                        this.formattedDateChangementBillet = event.target.value.split('-').reverse().join('/');
+                    }
+                    if (event.target.name == '00N3G00000K92Ua') {
+                        const fieldToFind = this.map.fields.find(field => field.name == '00N3G00000K92Uf');
+                        if (fieldToFind) {
+                            fieldToFind.required = false;
+                        }
+                    }
+                    if (event.target.name == '00N3G00000K92Uf') {
+                        const fieldToFind = this.map.fields.find(field => field.name == '00N3G00000K92Ua');
+                        if (fieldToFind) {
+                            fieldToFind.required = false;
+                        }
+                    }
+                },
+                getColSize: (field) => {
+                    if(field.fieldType === 'input'){
+                        return 'col-12 col-md-6 col-lg-4 mb-3';
+                    }
+                    if(field.fieldType === 'textarea'){
+                        return 'col-12 mb-3';
+                    }
+                }
+            },
+            mounted() {
+                console.log('App mounted.')
+            },
+        })
+    </script>
+    <!-- END: Vue.js initialization -->
+    <style type='text/css'>
+        .embeddedServiceHelpButton .helpButton .uiButton {
+            background-color: #005290;
+            font-family: "Arial", sans-serif;
+        }
+        .embeddedServiceHelpButton .helpButton .uiButton:focus {
+            outline: 1px solid #005290;
+        }
+    </style>
+    
+    <script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+    <script type='text/javascript'>
+        var initESW = function(gslbBaseURL) {
+            embedded_svc.settings.displayHelpButton = true; //Ou faux
+            embedded_svc.settings.language = ''; //Par exemple, saisissez 'en' ou 'en-US'
+    
+            //embedded_svc.settings.defaultMinimizedText = '...'; //(affiche par défaut Discuter avec un expert)
+            //embedded_svc.settings.disabledMinimizedText = '...'; //(affiche par défaut Agent hors ligne)
+    
+            //embedded_svc.settings.loadingText = ''; //(affiche par défaut Chargement)
+            //embedded_svc.settings.storageDomain = 'yourdomain.com'; //(définit le domaine de votre déploiement afin de permettre aux visiteurs d'accéder aux sous-domaines pendant la session de chat)
+    
+            // Paramètres de Chat
+            //embedded_svc.settings.directToButtonRouting = function(prechatFormData) {
+                // Dynamically changes the button ID based on what the visitor enters in the pre-chat form.
+                // Returns a valid button ID.
+            //};
+            //embedded_svc.settings.prepopulatedPrechatFields = {}; //Définit le remplissage automatique des champs du formulaire préalable au chat
+            //embedded_svc.settings.fallbackRouting = []; //Un groupe d’ID de bouton, d’ID d’utilisateur ou userId_buttonId
+            //embedded_svc.settings.offlineSupportMinimizedText = '...'; //(affiche par défaut Nous contacter)
+    
+            embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+            embedded_svc.settings.entryFeature = 'LiveAgent';
+    
+            embedded_svc.init(
+                'https://air-senegal--dev.sandbox.my.salesforce.com',
+                'https://air-senegal--dev.sandbox.my.site.com/Flyairsenegal',
+                gslbBaseURL,
+                '00D3G0000008qhI',
+                'chat_agents_for_web_support',
+                {
+                    baseLiveAgentContentURL: 'https://c.la1-c1cs-lo3.salesforceliveagent.com/content',
+                    deploymentId: '5723G000000CaZ1',
+                    buttonId: '5733G000000CaZE',
+                    baseLiveAgentURL: 'https://d.la1-c1cs-lo3.salesforceliveagent.com/chat',
+                    eswLiveAgentDevName: 'chat_agents_for_web_support',
+                    isOfflineSupportEnabled: false
+                }
+            );
+        };
+    
+        if (!window.embedded_svc) {
+            var s = document.createElement('script');
+            s.setAttribute('src', 'https://air-senegal--dev.sandbox.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+            s.onload = function() {
+                initESW(null);
+            };
+            document.body.appendChild(s);
+        } else {
+            initESW('https://service.force.com');
+        }
+    </script>
+</body>
+
+</html>
