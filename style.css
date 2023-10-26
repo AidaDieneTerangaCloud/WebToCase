@@ -1,0 +1,77 @@
+.selected-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    min-height: 100px;
+    max-height: 100px;
+
+    &:hover {
+        background-color: #ccc;
+    }
+}
+
+.default-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    min-height: 150px;
+    max-height: 150px;
+    overflow: hidden;
+
+    &:hover {
+        background-color: #c58686
+    }
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+
+/* Styles pour la bannière */
+.banner {
+    background-color: #ffff; /* Couleur de fond de la bannière */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  /*  color: #0f36e200;  Couleur du texte */
+}
+
+/* Styles pour l'icône de menu */
+.menu-icon {
+    font-size: 24px;
+    margin-right: 20px;
+    color: rgb(55, 155, 125);
+}
+
+/* Styles pour le logo */
+.logo img {
+    max-height: 20px; /* Ajustez la hauteur du logo selon vos besoins */
+}
+
+/* Styles pour les boutons de droite */
+.right-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Styles pour les boutons */
+.btn {
+    background-color: rgb(55, 155, 125); /* Couleur de fond des boutons */
+    color: #ffff; /* Couleur du texte des boutons */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Style pour le texte "Besoin d'aide" */
+.help-text {
+    font-size: 18px;
+    color: red;
+}
